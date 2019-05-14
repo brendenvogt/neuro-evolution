@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeatConsole", "NeatConsole\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNeatLib", "SharpNeatLib\SharpNeatLib.csproj", "{3851D176-6097-43E5-8E11-A910C218CABC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeatUI", "NeatUI\NeatUI.csproj", "{EEECE685-C5D7-41AD-BAF3-C90DE01DD207}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{3851D176-6097-43E5-8E11-A910C218CABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3851D176-6097-43E5-8E11-A910C218CABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3851D176-6097-43E5-8E11-A910C218CABC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEECE685-C5D7-41AD-BAF3-C90DE01DD207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEECE685-C5D7-41AD-BAF3-C90DE01DD207}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEECE685-C5D7-41AD-BAF3-C90DE01DD207}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEECE685-C5D7-41AD-BAF3-C90DE01DD207}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
