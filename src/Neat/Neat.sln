@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeatConsole", "NeatConsole\NeatConsole.csproj", "{466F5A86-A2A9-4420-84ED-303AC629EC52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNeatLib", "SharpNeatLib\SharpNeatLib.csproj", "{3851D176-6097-43E5-8E11-A910C218CABC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{466F5A86-A2A9-4420-84ED-303AC629EC52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{466F5A86-A2A9-4420-84ED-303AC629EC52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{466F5A86-A2A9-4420-84ED-303AC629EC52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{466F5A86-A2A9-4420-84ED-303AC629EC52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3851D176-6097-43E5-8E11-A910C218CABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3851D176-6097-43E5-8E11-A910C218CABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3851D176-6097-43E5-8E11-A910C218CABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3851D176-6097-43E5-8E11-A910C218CABC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
