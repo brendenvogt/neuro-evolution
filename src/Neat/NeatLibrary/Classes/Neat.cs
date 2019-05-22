@@ -1,10 +1,34 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NeatLibrary.Classes
 {
-    public class Neat
+    
+    public class Population
     {
+        private List<Host> _population;
+        private List<Specie> _species;
+        
+        public void Cull()
+        {
+            foreach (var specie in _species)
+            {
+                specie.HandleStagnation();
+                specie.HandleExtinction();
+            }
+        }
+        
+        //species culling / population control
+        //    Population Control
+        //        Take population, keep every species and the top fitness genome for each species. 
+        //        Kill 50% of low fitness people with some exponential gradient.
+        
+        private void Select()
+        {
+            
+        }
+
         //replication
         //    copy over best from every species
         //    25% chance of cloning using skewed exponential distribution
@@ -16,59 +40,181 @@ namespace NeatLibrary.Classes
         //        80% chance of a structural mutation
         //            5% chance of adding a new gene
         //            3% chance of adding a new node
+        private void Generate()
+        {
+            
+        }
+        
+        private void Evaluate()
+        {
+            
+        }
+    }
+    public class Host
+    {
+        public Genome Genome;
+
+        public bool IsDead { get; private set; }
+        public void Kill()
+        {
+            IsDead = true;
+        }
+        public double Fitness { get; set; }
+        
+        public Host(List<NodeGene> input, List<NodeGene> output)
+        {
+            
+        }
+    }
+
+    public class Specie
+    {
+        //stagnation params
+        private static int _stagnationDaysDefault = 2;
+        private int _stagnationDaysLeft = _stagnationDaysDefault;
+        private double _stagnationThreshold = 20.0;
+        //moving average
+        private static int _stagnationMovingAverageDays = 5;
+        private List<double> _stagnationMovingAverageList = new List<double>();
+        
+        //extinction params
+        private static int _extinctionDaysDefault = 2;
+        private int _extinctionDaysLeft = _extinctionDaysDefault;
+        private static int _extinctionCountThreshold = 2;
+
+        //compatibility
+        private static double _compatibilityThreshold = 3.0;
+        
+        //species hosts
+        private List<Host> _hosts = new List<Host>();
+        public Host Mascot { get; set; }
+
+        public bool IsDead { get; private set; }
+        public void Kill(bool hostsToo = true)
+        {
+            IsDead = true;
+            if (hostsToo)
+                KillAllHosts(_hosts);
+        }
+        //add host
+        public void AddHost(Host host)
+        {
+            
+        }
+        
+        //remove host
+        public void RemoveHost(Host host)
+        {
+            
+        }
+
+        private void KillAllHosts(List<Host> hosts)
+        {
+            foreach (var host in hosts)
+            {
+                host.Kill();
+            }
+        }
         
         //Species compatibility
-        // formula c1*E/N + c2*D/N + c3*W
-        //    take each species
-        //        take mascot genome for species and compare its value with the particular genome in question.
-        //        if abs(difference) is below a certain threshold then it should be added to the same genome
         //     if no compatible species is found then create new species
-        
-        //species culling / population control
-        //    Population Control
-        //        Take population, keep every species and the top fitness genome for each species. 
-        //        Kill 50% of low fitness people with some exponential gradient.
-        
+        public bool IsCompatible(Host host)
+        {
+            // formula c1*E/N + c2*D/N + c3*W
+            var c1 = 1.0; //todo move to global config
+            var c2 = 1.0; //todo move to global config
+            var c3 = 0.4; //todo move to global config
+            
+            var n = Math.Max(host.Genome.Size(), Mascot.Genome.Size());
+
+            //    take mascot genome for species and compare its value with the particular genome in question.
+            //    if abs(difference) is below a certain threshold then it should be added to the same genome
+
+            var e = 0.0; //todo calculate e
+            var d = 0.0; //todo calculate d
+            var w = 0.0; //todo calculate w
+            
+            var excess = c1*e/n;
+            var disjoint = c2*d/n;
+            var weightNot = w*c3;
+            
+            return excess+disjoint+weightNot < _compatibilityThreshold;
+        }
+
         //    Stagnation
-        //        if fitness for species doesnt advance 
+        //        if moving avg (STAGNATION_DAYS) fitness
+        public void HandleStagnation()
+        {
+            //decrement days left for species to survive;
+            _stagnationDaysLeft--;
+            
+            //calc fitness for entire specie
+            var totalFitness = _hosts.Sum(a => a.Fitness);
+            
+            //add new average _stagnationMovingAverageList.Add(newItem)
+            _stagnationMovingAverageList.Insert(0, totalFitness);
+            
+            //if moving average list size > moving average days
+            if (_stagnationMovingAverageList.Count > _stagnationMovingAverageDays)
+            {
+                //    remove average, _stagnationMovingAverageList.Remove() 
+                _stagnationMovingAverageList.Capacity = _stagnationMovingAverageDays;
+                _stagnationMovingAverageList.TrimExcess();
+            }
+
+            //calc moving average
+            var movingAverage = _stagnationMovingAverageList.Sum() / _stagnationMovingAverageList.Count;
+            
+            //if fitness moving average is below thresh
+            if (movingAverage < _stagnationThreshold)
+            {
+                //    if days left counter == 0
+                if (_stagnationDaysLeft == 0)
+                {
+                    //kill
+                    Kill();
+                }
+                else
+                {
+                    //    else start days left counter
+                    _stagnationDaysLeft = _stagnationDaysDefault;
+                }
+            }
+            else
+            {
+                //else stop counter
+                _stagnationDaysLeft = _stagnationDaysDefault;
+            }
+        }
+
         //    Extinction
-        
-        //STRUCTURE MUTATIONS
-        
-        //add node mutation
-        //    take connection gene, disable it,
-        //        and add a hidden node with incremented id
-        //        add a connection from source to new node weighted 1.0 and incremented innovation number,
-        //        add a connection from new node to target with weight of old connection weight and incremented innovation number
-        
-        //add connection mutation
-        //    take connection gene, find another random node,
-        //        add a connection from source to target with random weight and incremented innovation number
-        
-        //WEIGHT MUTATIONS
-        
-        //5% adjust add weight mutation (HyperParameter maxShift)
-        //    take connection gene
-        //        assign weight = weight + ((random.nextDouble()*maxShift)-(maxShift/2))
-        
-        // OR
-        
-        //5% exponential select adjust add weight mutation (HyperParameter maxShift)
-        //    take connection gene
-        //        assign weight = weight + ((ExpRandom()*maxShift)-(maxShift/2))
+        public void HandleExtinction()
+        {
+            //        if species[i].size < EXTINCTION_THRESH then a counter var life = EXTINCTION_GENS it has a lifespan before its killed
+            if (_hosts.Count < _extinctionCountThreshold)
+            {
+                _extinctionDaysLeft--;
+                if (_extinctionDaysLeft <= 0)
+                {
+                    Kill();
+                }
+                //             for each generation life -= 1 if life == 0 kill species;
+                //start extinction timer
 
-        //2% adjust multiply weight mutation (HyperParameter maxScalePercentage)
-        //    take connection gene
-        //        assign weight = weight * (random.nextDouble()*2*maxScalePercentage) + (1-maxScalePercentage)
+            }
+            else
+            {
+                //reset timer
+                _extinctionDaysLeft = _extinctionDaysDefault;
+            }
+        }
 
-        //2% new weight mutation
-        //    take connection gene (HyperParameter maxNewWeight)
-        //        assign weight = (random.nextDouble()*maxNewWeight)-(maxNewWeight/2)
         
-        //1% change sign mutation
-        //     take connection gene 
-        //        assign weight = weight * -1
+    }
 
+    public class Neat
+    {
+        
         public static double ExpRandom(int power = 2)
         {
             var rand = new Random(DateTime.UtcNow.GetHashCode());
@@ -126,27 +272,48 @@ namespace NeatLibrary.Classes
             var target = Nodes[targetId];
             Genes.Add(newId, new ConnectionGene(source, target, newId));
         }
-        
-        private double Compatibility(Genome g2)
-        {
-            var c1 = 1.0;
-            var c2 = 1.0;
-            var c3 = 0.4;
-            var n = Math.Max(Size(), g2.Size());
-            var e = 0.0;
-            var d = 0.0;
-            var w = 0.0;
-            var excess = c1*e/n;
-            var disjoint = c2*d/n;
-            var weightNot = w*c3;
-            return excess+disjoint+weightNot;
-        }        
 
         public void Crossover(Genome genome)
         {
             
         }
         
+        //STRUCTURE MUTATIONS
+        
+        //add node mutation
+        //    take connection gene, disable it,
+        //        and add a hidden node with incremented id
+        //        add a connection from source to new node weighted 1.0 and incremented innovation number,
+        //        add a connection from new node to target with weight of old connection weight and incremented innovation number
+        
+        //add connection mutation
+        //    take connection gene, find another random node,
+        //        add a connection from source to target with random weight and incremented innovation number
+        
+        //WEIGHT MUTATIONS
+        
+        //5% adjust add weight mutation (HyperParameter maxShift)
+        //    take connection gene
+        //        assign weight = weight + ((random.nextDouble()*maxShift)-(maxShift/2))
+        
+        // OR
+        
+        //5% exponential select adjust add weight mutation (HyperParameter maxShift)
+        //    take connection gene
+        //        assign weight = weight + ((ExpRandom()*maxShift)-(maxShift/2))
+
+        //2% adjust multiply weight mutation (HyperParameter maxScalePercentage)
+        //    take connection gene
+        //        assign weight = weight * (random.nextDouble()*2*maxScalePercentage) + (1-maxScalePercentage)
+
+        //2% new weight mutation
+        //    take connection gene (HyperParameter maxNewWeight)
+        //        assign weight = (random.nextDouble()*maxNewWeight)-(maxNewWeight/2)
+        
+        //1% change sign mutation
+        //     take connection gene 
+        //        assign weight = weight * -1
+
         public void Mutate()
         {
             if (_random.NextDouble() < 0.8)
@@ -259,14 +426,5 @@ namespace NeatLibrary.Classes
         public NodeType Type { get; set; }
         
     }
-
-    public class Host
-    {
-        public Genome Genome;
-
-        public Host(List<NodeGene> input, List<NodeGene> output)
-        {
-            
-        }
-    }
+    
 }
